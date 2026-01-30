@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  airflow:
+    image: apache/airflow:2.7.3
+    user: "50000:50000"
+    container_name: airflow
+    restart: always
+
+    environment:
+      AIRFLOW__WEBSERVER__WEB_SERVER_HOST: 0.0.0.0
+      AIRFLOW__WEBSERVER__WEB_SERVER_PORT: 8080
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__ENABLE_XCOM_PICKLING: "true"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      _PIP_ADDITIONAL_REQUIREMENTS: pandas scikit-learn kneed
+
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+
+    ports:
+      - "8080:8080"
+
+    command: >
+      bash -c "
+      airflow standalone
+      "
+
